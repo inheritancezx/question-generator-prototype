@@ -22,8 +22,8 @@ This is a prototype web app that generates creative questions about any theme yo
 	```
 	- You can use any supported model (e.g., llama3:instruct, qwen2.5:7b-instruct). Adjust the model name as needed.
 
-4. **Configure the model (optional):**
-	- To use a different model, set the environment variable:
+4. **Configure the model:**
+	- To use a the model, set the environment variable:
 	  ```powershell
 	  cp .env.local.example .env.local
 	  ```
