@@ -1,70 +1,63 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Question Generator Prototype
 
-## Available Scripts
+This is a prototype web app that generates creative questions about any theme you enter, powered by a local LLM (Ollama) and Next.js.
 
-In the project directory, you can run:
+## ⚡ Quick Start
 
-### `npm start`
+1. **Clone the repo and install dependencies:**
+	```powershell
+	git clone <your-repo-url>
+	cd question-generator
+	npm install
+	```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+2. **Install and start Ollama:**
+	- Download Ollama: https://ollama.com
+	- Start the Ollama service (default: http://localhost:11434)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+3. **Pull a model (gemma3:4b):**
+	```powershell
+	ollama pull gemma3:4b
+	```
+	- You can use any supported model (e.g., llama3:instruct, qwen2.5:7b-instruct). Adjust the model name as needed.
 
-### `npm test`
+4. **Configure the model (optional):**
+	- To use a different model, set the environment variable:
+	  ```powershell
+	  cp .env.local.example .env.local
+	  ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+5. **Run the app:**
+	```powershell
+	npm run dev
+	```
+	- Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### `npm run build`
+## 🧑‍💻 How It Works (Flow)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. **User enters a theme** in the web UI and clicks "Generate".
+2. The frontend sends a POST request to `/api/generate-questions` with the theme.
+3. The Next.js API route builds a prompt and sends it to the Ollama model running locally.
+4. Ollama generates a list of questions and returns them to the API.
+5. The API parses and cleans up the output, then sends the questions back to the frontend.
+6. The frontend displays the questions to the user.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Why use Next.js API routes?
+- **Security:** Keeps your Ollama host/model details and any secrets on the server, not in the browser.
+- **Browser compatibility:** Browsers can't call localhost:11434 directly (CORS, network issues), but they can call your Next.js API.
+- **Custom logic:** Lets you validate input, handle errors, and format responses for the frontend.
+- **Flexibility:** Makes it easy to swap models, add authentication, or change backend logic later.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## ⚠️ Prototype Notice
+This project is a prototype for experimenting with local LLM-powered question generation. It is not production-ready. Expect rough edges, and use at your own risk!
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 🛠️ Troubleshooting
+- **Model not found:**
+  - Error: `model 'llama3:instruct' not found`
+  - Solution: Pull the model you want (e.g., `ollama pull gemma3:4b`) and set `OLLAMA_MODEL` if needed.
+- **Timeouts:**
+  - Error: `HeadersTimeoutError` or `Request timed out...`
+  - Solution: Use a smaller/faster model, or pre-load the model by running a dummy prompt in Ollama first.
+- **Permission errors on .next folder:**
+  - Solution: Run the project from a local drive (not a network share) or ensure the `.next` directory is writable.
